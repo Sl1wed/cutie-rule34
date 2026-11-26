@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <title>r34 — media gallery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{color-scheme:light;--bg:#ffffff;--panel:#ffffff;--panel2:#f6f6f7;--line:#e7e7e9;--muted:#777780;--text:#111114;--accent:#c92d3a;--accent2:#9e1d29}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;min-height:100vh}
+    button,input{font:inherit}button{cursor:pointer}
+    .noise{position:fixed;inset:0;pointer-events:none;opacity:.035;z-index:5;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+    .shell{width:min(1180px,calc(100% - 44px));margin:auto}
+    header{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ededf0}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit}
+    .brand img{width:42px;height:42px;border-radius:13px;object-fit:cover;border:1px solid #e5e5e7;background:#fff}
+    .brand-name{font:700 20px "Space Grotesk",sans-serif;letter-spacing:-.7px}.brand-name span{color:var(--accent)}
+    .top-note{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .hero{padding:65px 0 34px;display:flex;align-items:end;justify-content:space-between;gap:24px}
+    .eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:15px}
+    h1{font:700 clamp(38px,6vw,66px)/.98 "Space Grotesk",sans-serif;letter-spacing:-.065em;margin:0}
+    h1 em{font-style:normal;color:var(--accent)}
+    .sub{color:var(--muted);font-size:14px;margin:17px 0 0;max-width:480px;line-height:1.7}
+    .status{display:flex;align-items:center;gap:8px;color:#777;font-size:12px;padding:10px 13px;border:1px solid var(--line);border-radius:999px;white-space:nowrap;background:#fff}
+    .dot{width:7px;height:7px;background:#a98bff;border-radius:50%;box-shadow:0 0 12px #c92d3a}
+    .toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:24px 0 18px;border-top:1px solid #ededf0}
+    .tabs{display:flex;gap:7px;padding:5px;background:#f8f8f9;border:1px solid var(--line);border-radius:13px}
+    .tab{border:0;background:transparent;color:var(--muted);padding:10px 16px;border-radius:9px;font-size:13px;font-weight:600;transition:.2s}
+    .tab.active{background:#171719;color:#fff;box-shadow:inset 0 0 0 1px #171719}
+    .tab span{color:#aaa2b9;margin-left:5px;font-size:11px}
+    .search{width:min(260px,45vw);position:relative}
+    .search input{width:100%;background:#f8f8f9;border:1px solid var(--line);border-radius:11px;color:#fff;padding:11px 14px 11px 37px;outline:none;font-size:13px}
+    .search input:focus{border-color:#68558c}.search svg{position:absolute;left:13px;top:12px;color:#777}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;padding-bottom:70px}
+    .tile{position:relative;overflow:hidden;border:1px solid #e8e8eb;background:#f4f4f5;border-radius:13px;aspect-ratio:1/1;cursor:pointer;isolation:isolate;animation:appear .35s both}
+    .tile img,.tile video{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s cubic-bezier(.2,.7,.2,1);background:#f2f2f4}
+    .tile:hover img,.tile:hover video{transform:scale(1.055)}
+    .tile:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.7));opacity:.8;pointer-events:none}
+    .tile-name{position:absolute;z-index:2;bottom:12px;left:13px;right:13px;font-size:12px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-shadow:0 1px 5px #000}
+    .play{position:absolute;z-index:2;top:12px;right:12px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#111111cc;border:1px solid #ffffff88;backdrop-filter:blur(8px)}
+    .empty{grid-column:1/-1;text-align:center;padding:80px 20px;border:1px dashed #d8d8dc;border-radius:16px;color:var(--muted)}
+    .empty strong{display:block;color:#111;font:600 19px "Space Grotesk";margin-bottom:8px}
+    .empty code{color:var(--accent);background:#f6e9ea;padding:3px 6px;border-radius:5px}
+    footer{border-top:1px solid #ededf0;padding:22px 0 34px;display:flex;justify-content:space-between;color:#777;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+    .viewer{position:fixed;inset:0;z-index:20;background:#000e;display:none;align-items:center;justify-content:center;padding:64px 22px 30px;backdrop-filter:blur(12px)}
+    .viewer.open{display:flex}.viewer-media{max-width:min(100%,1250px);max-height:100%;object-fit:contain;box-shadow:0 20px 90px #000}
+    .viewer video{width:min(1100px,100%);max-height:100%;background:#000}
+    .vtop{position:absolute;top:18px;left:22px;right:22px;display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:12px}
+    .vcontrols{display:flex;gap:8px}.vbtn{border:1px solid #ffffff2b;background:#ffffff;color:#111;width:39px;height:39px;border-radius:50%;display:grid;place-items:center;font-size:19px}
+    .vbtn:hover{background:#f1e7e8;border-color:#c92d3a}.viewer-caption{position:absolute;bottom:16px;left:20px;right:20px;text-align:center;color:#eee;font-size:12px}
+    .hidden{display:none!important}
+    @keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:850px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding-top:48px}}
+    @media(max-width:560px){.shell{width:calc(100% - 28px)}header{height:68px}.brand img{width:36px;height:36px}.top-note{font-size:10px}.hero{display:block;padding:43px 0 27px}.status{display:inline-flex;margin-top:22px}.toolbar{align-items:flex-start;flex-direction:column}.search{width:100%}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.tile{border-radius:10px}.tab{padding:9px 13px}footer{font-size:9px}}
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="shell">
+    <header>
+      <a class="brand" href="#">
+        <img src="assets/logo.png" alt="Gallery logo" onerror="this.style.display='none'">
+        <div class="brand-name">r34<span>.</span></div>
+      </a>
+      <div class="top-note">SKYLINE GT-R • MEDIA ARCHIVE</div>
+    </header>
+    <section class="hero">
+      <div>
+        <div class="eyebrow">SKYLINE GT-R • PERSONAL ARCHIVE</div>
+        <h1>Built for the<br><em>memories.</em></h1>
+        <p class="sub">A clean home for your favourite photos and videos. Browse the collection and open any memory fullscreen.</p>
+      </div>
+      <div class="status"><i class="dot"></i><span id="status">Connecting to your collection…</span></div>
+    </section>
+    <section class="toolbar">
+      <div class="tabs" role="tablist" aria-label="Album type">
+        <button class="tab active" id="photosTab" role="tab" aria-selected="true">Photos <span id="photoCount">—</span></button>
+        <button class="tab" id="videosTab" role="tab" aria-selected="false">Videos <span id="videoCount">—</span></button>
+      </div>
+      <label class="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="search" type="search" placeholder="Search your collection…" autocomplete="off">
+      </label>
+    </section>
+    <main id="gallery" class="grid" aria-live="polite">
+      <div class="empty"><strong>Loading your albums</strong>Fetching files from your <code>cutie/</code> folder…</div>
+    </main>
+    <footer><span>r34 gallery</span><span>made for your memories · <span id="year"></span></span></footer>
+  </div>
+
+  <div class="viewer" id="viewer" aria-modal="true" role="dialog" aria-label="Media viewer">
+    <div class="vtop"><span id="viewerIndex"></span><div class="vcontrols">
+      <button class="vbtn" id="prev" aria-label="Previous">‹</button>
+      <button class="vbtn" id="next" aria-label="Next">›</button>
+      <button class="vbtn" id="close" aria-label="Close">×</button>
+    </div></div>
+    <div id="viewerContent"></div>
+    <div class="viewer-caption" id="viewerCaption"></div>
+  </div>
+
+<script>
+  // Set these three values to match your public GitHub repository.
+  const GITHUB = {
+    owner: "Sl1wed",
+    repo: "r34",
+    branch: "main",
+    folder: "cutie"
+  };
+
+  const imageExt = /\.(avif|gif|jpe?g|png|webp|bmp)$/i;
+  const videoExt = /\.(mp4|webm|mov|m4v|ogv)$/i;
+  let allFiles = [], activeType = "photo", visibleFiles = [], currentIndex = 0;
+
+  const $ = id => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
+
+  function fileType(name) {
+    if (imageExt.test(name)) return "photo";
+    if (videoExt.test(name)) return "video";
+    return null;
+  }
+  function niceName(name) {
+    return name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+  }
+  function setStatus(message) { $("status").textContent = message; }
+
+  async function loadFiles() {
+    if (GITHUB.owner.startsWith("YOUR_") || GITHUB.repo.startsWith("YOUR_")) {
+      showMessage("One quick setup step", "Open index.html and add your GitHub username and repository name in the GITHUB settings.");
+      setStatus("Setup needed");
+      return;
+    }
+    const api = `https://api.github.com/repos/${encodeURIComponent(GITHUB.owner)}/${encodeURIComponent(GITHUB.repo)}/contents/${GITHUB.folder.split("/").map(encodeURIComponent).join("/")}?ref=${encodeURIComponent(GITHUB.branch)}`;
+    try {
+      const response = await fetch(api, {headers: {"Accept":"application/vnd.github+json"}});
+      if (!response.ok) {
+        if (response.status === 404) throw new Error("Can't find the folder. Check the repository name, branch, and cutie folder.");
+        if (response.status === 403) throw new Error("GitHub API rate limit reached. Try again in a little while.");
+        throw new Error(`GitHub returned ${response.status}. Check your repository settings.`);
+      }
+      const data = await response.json();
+      if (!Array.isArray(data)) throw new Error("The cutie path must be a folder, not a single file.");
+      allFiles = data.filter(item => item.type === "file" && fileType(item.name))
+        .map(item => ({name:item.name, url:item.download_url, type:fileType(item.name)}))
+        .filter(item => item.url);
+      const photos = allFiles.filter(f => f.type === "photo").length;
+      const videos = allFiles.filter(f => f.type === "video").length;
+      $("photoCount").textContent = photos;
+      $("videoCount").textContent = videos;
+      setStatus(`${allFiles.length} ${allFiles.length === 1 ? "memory" : "memories"} loaded`);
+      render();
+    } catch (error) {
+      setStatus("Could not load");
+      showMessage("Couldn't load your collection", error.message);
+    }
+  }
+
+  function showMessage(title, detail) {
+    $("gallery").innerHTML = "";
+    const box = document.createElement("div");
+    box.className = "empty";
+    const strong = document.createElement("strong");
+    strong.textContent = title;
+    const p = document.createElement("p");
+    p.textContent = detail;
+    box.append(strong,p);
+    $("gallery").append(box);
+  }
+
+  function render() {
+    const query = $("search").value.toLowerCase().trim();
+    visibleFiles = allFiles.filter(f => f.type === activeType && niceName(f.name).toLowerCase().includes(query));
+    $("gallery").innerHTML = "";
+    if (!visibleFiles.length) {
+      showMessage(query ? "No matches found" : `No ${activeType === "photo" ? "photos" : "videos"} yet`,
+        query ? "Try another search." : `Add ${activeType === "photo" ? "images" : "video files"} to the cutie/ folder in your GitHub repository, then refresh.`);
+      return;
+    }
+    visibleFiles.forEach((file, index) => {
+      const tile = document.createElement("button");
+      tile.className = "tile";
+      tile.style.animationDelay = `${Math.min(index, 15) * 25}ms`;
+      tile.setAttribute("aria-label", `Open ${niceName(file.name)}`);
+      if (file.type === "photo") {
+        const img = document.createElement("img");
+        img.src = file.url; img.alt = niceName(file.name); img.loading = "lazy";
+        tile.append(img);
+      } else {
+        const video = document.createElement("video");
+        video.src = file.url; video.muted = true; video.preload = "metadata"; video.playsInline = true;
+        tile.append(video);
+        const play = document.createElement("span"); play.className = "play"; play.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>'; tile.append(play);
+      }
+      const label = document.createElement("span"); label.className = "tile-name"; label.textContent = niceName(file.name); tile.append(label);
+      tile.addEventListener("click", () => openViewer(index));
+      $("gallery").append(tile);
+    });
+  }
+
+  function switchTab(type) {
+    activeType = type;
+    $("photosTab").classList.toggle("active", type === "photo");
+    $("videosTab").classList.toggle("active", type === "video");
+    $("photosTab").setAttribute("aria-selected", type === "photo");
+    $("videosTab").setAttribute("aria-selected", type === "video");
+    render();
+  }
+
+  function openViewer(index) {
+    currentIndex = index;
+    updateViewer();
+    $("viewer").classList.add("open");
+    document.body.style.overflow = "hidden";
+    $("close").focus();
+  }
+  function updateViewer() {
+    const file = visibleFiles[currentIndex];
+    if (!file) return;
+    $("viewerContent").innerHTML = "";
+    let media;
+    if (file.type === "photo") {
+      media = document.createElement("img");
+      media.className = "viewer-media"; media.src = file.url; media.alt = niceName(file.name);
+    } else {
+      media = document.createElement("video");
+      media.className = "viewer-media"; media.src = file.url; media.controls = true; media.autoplay = true; media.playsInline = true;
+    }
+    $("viewerContent").append(media);
+    $("viewerIndex").textContent = `${currentIndex + 1} / ${visibleFiles.length}`;
+    $("viewerCaption").textContent = niceName(file.name);
+    $("prev").disabled = visibleFiles.length < 2;
+    $("next").disabled = visibleFiles.length < 2;
+  }
+  function closeViewer() {
+    const video = $("viewerContent").querySelector("video");
+    if (video) video.pause();
+    $("viewer").classList.remove("open");
+    $("viewerContent").innerHTML = "";
+    document.body.style.overflow = "";
+  }
+  function moveViewer(delta) {
+    if (!visibleFiles.length) return;
+    currentIndex = (currentIndex + delta + visibleFiles.length) % visibleFiles.length;
+    updateViewer();
+  }
+
+  $("photosTab").addEventListener("click", () => switchTab("photo"));
+  $("videosTab").addEventListener("click", () => switchTab("video"));
+  $("search").addEventListener("input", render);
+  $("close").addEventListener("click", closeViewer);
+  $("prev").addEventListener("click", () => moveViewer(-1));
+  $("next").addEventListener("click", () => moveViewer(1));
+  $("viewer").addEventListener("click", e => { if (e.target === $("viewer")) closeViewer(); });
+  document.addEventListener("keydown", e => {
+    if (!$("viewer").classList.contains("open")) return;
+    if (e.key === "Escape") closeViewer();
+    if (e.key === "ArrowLeft") moveViewer(-1);
+    if (e.key === "ArrowRight") moveViewer(1);
+  });
+  loadFiles();
+</script>
+</body>
+</html>
